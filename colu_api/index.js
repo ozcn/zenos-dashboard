@@ -25,6 +25,9 @@ app.post('/get_address', function(req, res) {
   postToApi('', jsonData, function(err, body) {
     if (err) {
       console.error(err);
+      return res.json({
+        status: 'ng'
+      });
     }
 
     console.log(body);
@@ -57,6 +60,9 @@ app.post('/get_address_info', function(req, res) {
   postToApi('', jsonData, function(err, body) {
     if (err) {
       console.error(err);
+      return res.json({
+        status: 'ng'
+      });
     }
 
     console.log(util.inspect(body, false, null));
@@ -110,6 +116,9 @@ app.post('/send_asset', function(req, res) {
   postToApi('', jsonData, function(err, body) {
     if (err) {
       console.error(err);
+      return res.json({
+        status: 'ng'
+      });
     }
 
     console.log(util.inspect(body, false, null));
