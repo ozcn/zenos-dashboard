@@ -80,6 +80,48 @@ app.post('/get_address_info', function(req, res) {
   });
 });
 
+// fromAddress から toAddress に asset を送る
+// http://documentation.colu.co/#SendAsset36
+app.post('/send_asset', function(req, res) {
+  if (!req.body.fromAddress || !req.body.toAddress ||
+    !req.body.amount || !req.body.assetId) {
+
+    return res.json({
+      status: 'ng'
+    });
+  }
+
+  var sendAsset = {
+    "from": [req.body.fromAddress],
+    "to": [{
+      "address": req.body.toAddress,
+      "amount": req.body.amount,
+      "assetId": req.body.assetId
+    }],
+  };
+
+  var jsonData = {
+    jsonrpc: "2.0", // mandatory
+    method: "sendAsset", // mandatory
+    id: "1", // mandatory if response is needed
+    params: sendAsset // asset json object
+  };
+
+  postToApi('', jsonData, function(err, body) {
+    if (err) {
+      console.error(err);
+    }
+
+    console.log(util.inspect(body, false, null));
+
+    var jsonResult = {
+      status: 'ok'
+    };
+
+    res.json(jsonResult);
+  });
+});
+
 app.listen(3000);
 
 /**
