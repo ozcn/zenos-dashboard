@@ -131,7 +131,7 @@ app.post('/send_asset', function(req, res) {
   });
 });
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
 
 /**
  * node $(which colu) で起動中の Colu API へリクエストを送る
