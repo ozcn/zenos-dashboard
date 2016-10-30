@@ -1,2 +1,2 @@
 web: node index.js
-web: colu
+web2: node ./node_modules/.bin/colu
