@@ -147,7 +147,7 @@ app.listen(process.env.PORT || 3000);
 function postToApi(apiEndpoint, jsonData, callback) {
   console.log(apiEndpoint + ': ', JSON.stringify(jsonData));
   request.post({
-      url: 'http://localhost:8081/' + apiEndpoint,
+      url: 'http://0.0.0.0:8081/' + apiEndpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
