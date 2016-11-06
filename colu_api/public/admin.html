@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<script src='//d3js.org/d3.v3.min.js'></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+<body>
+<div style='width:960px;height:500px'></div>
+<script>
+var socket = io();
+var map = new L.Map(d3.select('div').node()).setView([35.678707, 139.739143], 10);
+var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+var svgLayer = d3.select(map.getPanes().overlayPane).append('svg').attr('class', 'leaflet-zoom-hide');
+var plotLayer = svgLayer.append('g');
+
+var updatePosition = function(d)
+{
+  d.pos = map.latLngToLayerPoint(new L.LatLng(d.latitude, d.longitude));
+  d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
+}
+
+var reset = function()
+{
+  var bounds = map.getBounds();
+  var topLeft = map.latLngToLayerPoint(bounds.getNorthWest());
+  var bottomRight = map.latLngToLayerPoint(bounds.getSouthEast());
+
+  svgLayer.attr("width", bottomRight.x - topLeft.x)
+    .attr("height", bottomRight.y - topLeft.y)
+    .style("left", topLeft.x + "px")
+    .style("top", topLeft.y + "px");
+
+  plotLayer.attr('transform', 'translate('+ -topLeft.x + ',' + -topLeft.y + ')');
+}
+
+map.on("move", reset);
+
+socket.on('send_asset', function(msg) {
+  console.log(msg);
+});
+
+</script>
