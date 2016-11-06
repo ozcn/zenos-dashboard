@@ -121,6 +121,12 @@ app.post('/send_asset', function(req, res) {
     }],
   };
 
+  var location = null;
+
+  if (req.body.fromAddress.location !== void 0) {
+    location = req.body.fromAddress.location;
+  }
+
   var jsonData = {
     jsonrpc: "2.0", // mandatory
     method: "sendAsset", // mandatory
@@ -138,7 +144,12 @@ app.post('/send_asset', function(req, res) {
     }
 
     console.log(util.inspect(body, false, null));
-    app.on_send_asset(null, util.inspect(body, false, null));
+    var emitData = util.inspect(body, false, null);
+    emitData.timestamp = new Date().getTime();
+    if (location != null) {
+      emitData.location = location;
+    }
+    app.on_send_asset(null, emitData);
     var jsonResult = {
       status: 'ok'
     };
@@ -159,6 +170,11 @@ app.get('/test/send_asset', function(req, res) {
       financeTxid: '20b7d4a8f2e223f8a58360c5202aa7ce7dfaa25c17b1655be1ac709caf0667c7',
       txid: 'b905a0d835393245cef9901f891fa1058e33c2ac44fb01b437055aeeab401c55'
     }
+  };
+  example_response.timestamp = new Date().getTime();
+  example_response.location = {
+    longitude: 139.739143 + (0.01 * Math.random() - 0.005),
+    latitude: 35.678707 + (0.01 * Math.random() - 0.005)
   };
   app.on_send_asset(null, example_response);
   var jsonResult = {
