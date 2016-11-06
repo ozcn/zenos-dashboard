@@ -39,7 +39,12 @@ app.post('/get_address', function(req, res) {
 
     console.log(body);
 
-    res.json(body);
+    var jsonResult = {
+      status: 'ok',
+      address: body.result || null,
+    };
+
+    res.json(jsonResult);
   });
 });
 
