@@ -128,13 +128,14 @@ app.post('/send_asset', function(req, res) {
   postToApi('', jsonData, function(err, body) {
     if (err) {
       console.error(err);
+      app.on_send_asset(err, null);
       return res.json({
         status: 'ng'
       });
     }
 
     console.log(util.inspect(body, false, null));
-
+    app.on_send_asset(null, util.inspect(body, false, null));
     var jsonResult = {
       status: 'ok'
     };
