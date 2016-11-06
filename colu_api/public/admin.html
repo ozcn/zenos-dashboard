@@ -18,12 +18,16 @@ var plotLayer = svgLayer.append('g');
 var timelineList = d3.select('#timeline').append('ul')
   .style('list-item', 'none');
 
+var timeFormat = d3.time.format('%Y-%m-%d %H:%M:%S');
+
 var data = [];
 
 var updatePosition = function(d)
 {
-  d.pos = map.latLngToLayerPoint(new L.LatLng(d.latitude, d.longitude));
-  d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
+  if (d.location !== void 0) {
+    d.pos = map.latLngToLayerPoint(new L.LatLng(d.location.latitude, d.location.longitude));
+    d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
+  }
 }
 
 var reset = function()
@@ -40,20 +44,25 @@ var reset = function()
   plotLayer.attr('transform', 'translate('+ -topLeft.x + ',' + -topLeft.y + ')');
 }
 
-map.on("move", reset);
+map.on('move', function()
+{
+  reset();
+  plotLayer.selectAll('circle').each(updatePosition);
+});
 
 socket.on('send_asset', function(msg) {
+  console.log(msg);
   data.push(msg);
   if (msg.location !== void 0) {
     plotLayer.selectAll('circle').data(data).enter().append('circle')
       .attr('fill', 'steelbluc')
       .attr('stroke', '#FFF')
-      .attr('stroke-width', 3);
-    updatePosition();
+      .attr('stroke-width', 3)
+      .attr('r', 10)
+      .each(updatePosition);
   }
   timelineList.selectAll('li').data(data).enter().append('li')
-    .text(function(d) {return d.result.financeTxid;});
-  console.log(msg);
+    .text(function(d) {return timeFormat(new Date(d.timestamp)) + ': ' + d.result.financeTxid;});
 });
-
+reset();
 </script>
