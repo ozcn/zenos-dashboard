@@ -55,7 +55,7 @@ socket.on('send_asset', function(msg) {
   data.push(msg);
   if (msg.location !== void 0) {
     plotLayer.selectAll('circle').data(data).enter().append('circle')
-      .attr('fill', 'steelbluc')
+      .attr('fill', 'steelblue')
       .attr('stroke', '#FFF')
       .attr('stroke-width', 3)
       .attr('r', 10)
