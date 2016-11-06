@@ -5,15 +5,20 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css' />
 <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
 <body>
-<div style='width:960px;height:500px'></div>
+<div id='mapcanvas' style='width:960px;height:500px'></div>
+<div id='timeline'></div>
 <script>
 var socket = io();
-var map = new L.Map(d3.select('div').node()).setView([35.678707, 139.739143], 10);
+var map = new L.Map(d3.select('#mapcanvas').node()).setView([35.678707, 139.739143], 10);
 var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
   attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 var svgLayer = d3.select(map.getPanes().overlayPane).append('svg').attr('class', 'leaflet-zoom-hide');
 var plotLayer = svgLayer.append('g');
+var timelineList = d3.select('#timeline').append('ul')
+  .style('list-item', 'none');
+
+var data = [];
 
 var updatePosition = function(d)
 {
@@ -38,6 +43,16 @@ var reset = function()
 map.on("move", reset);
 
 socket.on('send_asset', function(msg) {
+  data.push(msg);
+  if (msg.location !== void 0) {
+    plotLayer.selectAll('circle').data(data).enter().append('circle')
+      .attr('fill', 'steelbluc')
+      .attr('stroke', '#FFF')
+      .attr('stroke-width', 3);
+    updatePosition();
+  }
+  timelineList.selectAll('li').data(data).enter().append('li')
+    .text(function(d) {return d.result.financeTxid;});
   console.log(msg);
 });
 
