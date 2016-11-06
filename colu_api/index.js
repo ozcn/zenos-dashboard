@@ -173,8 +173,8 @@ app.get('/test/send_asset', function(req, res) {
   };
   example_response.timestamp = new Date().getTime();
   example_response.location = {
-    longitude: 139.739143 + (0.01 * Math.random() - 0.005),
-    latitude: 35.678707 + (0.01 * Math.random() - 0.005)
+    longitude: 139.739143 + (0.1 * Math.random() - 0.05),
+    latitude: 35.678707 + (0.1 * Math.random() - 0.05)
   };
   app.on_send_asset(null, example_response);
   var jsonResult = {
