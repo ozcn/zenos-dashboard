@@ -1,5 +1,9 @@
 colu/node_modules
 colu_api/node_modules
 
+<<<<<<< HEAD
 
 *.log
+=======
+npm-debug.log
+>>>>>>> f57b21404bfbb7caaeadd344a589d8e3a1795da1
