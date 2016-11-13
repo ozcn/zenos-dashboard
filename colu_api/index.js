@@ -152,7 +152,7 @@ app.listen(process.env.PORT || 3000);
 function postToApi(apiEndpoint, jsonData, callback) {
   console.log(apiEndpoint + ': ', JSON.stringify(jsonData));
   request.post({
-      url: 'http://localhost:8081/' + apiEndpoint,
+      url: 'https://zenos-colu.herokuapp.com/' + apiEndpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
