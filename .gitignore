@@ -2,3 +2,4 @@ colu/node_modules
 colu_api/node_modules
 
 *.log
+npm-debug.log
