@@ -176,7 +176,7 @@
               <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-users"></i></div>
-                  <div class="count">179</div>
+                  <div id="usersCount" class="count">-</div>
                   <h3>メンバー数</h3>
                 </div>
               </div>
@@ -190,7 +190,7 @@
               <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-comments-o"></i></div>
-                  <div class="count">1,234</div>
+                  <div id="messagesCount" class="count">-</div>
                   <h3>メッセージ</h3>
                 </div>
               </div>
@@ -531,5 +531,43 @@
     });
     reset();
     </script>
+
+    <!-- Firebase -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase-storage.js"></script>
+    <script>
+      $(document).ready(function() {
+        var app = firebase.initializeApp({
+          apiKey: "AIzaSyCTxsJjLOpqfAwHz7YSlZxLrGUY_eQqrKM",
+          authDomain: "sample-messenger-82a8f.firebaseapp.com",
+          databaseURL: "https://sample-messenger-82a8f.firebaseio.com",
+          storageBucket: "sample-messenger-82a8f.appspot.com",
+        });
+
+        // ユーザ数を取得する
+        var usersRef = firebase.database().ref("users");
+        usersRef.on("value", function(snapshot) {
+          var usersCount = snapshot.numChildren();
+          $("#usersCount").text(usersCount);
+        });
+
+        // メッセージ数を取得する
+        var messagesRef = firebase.database().ref("messages");
+        messagesRef.on("value", function(snapshot) {
+          var messagesCount = 0;
+          var messages = snapshot.val();
+          _.forEach(messages, function(value, key) {
+            messagesCount += Object.keys(value).length;
+          });
+          $("#messagesCount").text(messagesCount);
+        });
+      });
+    </script>
+    <!-- /Firebase -->
   </body>
 </html>
