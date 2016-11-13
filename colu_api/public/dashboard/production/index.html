@@ -183,7 +183,7 @@
               <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="tile-stats">
                   <div class="icon"><i class="fa fa-money"></i></div>
-                  <div class="count">12,312</div>
+                  <div class="count" id='money_total'>-</div>
                   <h3>取引金額</h3>
                 </div>
               </div>
@@ -468,7 +468,7 @@
 
     <script>
     var socket = io();
-    var map = new L.Map(d3.select('#map_leaflet').node()).setView([35.678707, 139.739143], 14);
+    var map = new L.Map(d3.select('#map_leaflet').node()).setView([35.678707, 139.739143], 13);
     var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
@@ -477,10 +477,9 @@
     var timelineList = d3.select('#timeline');
 
     var timeFormat = d3.time.format('%Y-%m-%d %H:%M:%S');
-
+    var messagesCount = 0;
+    var moneyCount = 123120;
     var __data = [];
-    var initial_money = 12312;
-    var initial_messages = 1234;
 
     var updatePosition = function(d)
     {
@@ -489,7 +488,6 @@
         d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
       }
     }
-
     var reset = function()
     {
       var bounds = map.getBounds();
@@ -512,7 +510,11 @@
 
     socket.on('send_asset', function(msg) {
       console.log(msg);
-      msg.amount = Math.ceil(Math.random() * 9900 + 100);
+      ++messagesCount;
+      var amount = Math.ceil(Math.random() * 900 + 100) +Math.ceil(Math.random() * 900 + 100) + Math.ceil(Math.random() * 900 + 100);
+      msg.amount = amount;
+      moneyCount += amount;
+
       __data.push(msg);
       if (msg.location !== void 0) {
         plotLayer.selectAll('circle').data(__data).enter().append('circle')
@@ -527,7 +529,8 @@
       body.append('a').attr('class', 'title').text(function(d){return timeFormat(new Date(d.timestamp));});
       body.append('p').text(function(d){return d.amount + ' 円';});
       body.append('p').append('small').text(function(d){return d.result.metadataSha1;});
-
+      $("#messagesCount").text(messagesCount);
+      d3.select('#money_total').text(moneyCount);
     });
     reset();
     </script>
@@ -559,13 +562,15 @@
         // メッセージ数を取得する
         var messagesRef = firebase.database().ref("messages");
         messagesRef.on("value", function(snapshot) {
-          var messagesCount = 0;
+          messagesCount = 0;
           var messages = snapshot.val();
           _.forEach(messages, function(value, key) {
             messagesCount += Object.keys(value).length;
           });
           $("#messagesCount").text(messagesCount);
+          d3.select('#money_total').text(moneyCount);
         });
+
       });
     </script>
     <!-- /Firebase -->
