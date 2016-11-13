@@ -66,20 +66,20 @@
                   <li><a href="index.html"><i class="fa fa-home"></i>ダッシュボード</a></li>
                   <li><a><i class="fa fa-money"></i> 通貨 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="form.html">時系列</a></li>
-                      <li><a href="form.html">発行</a></li>
+                      <li><a href="index.html">時系列</a></li>
+                      <li><a href="index.html">発行</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-comments-o"></i> メッセージ <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="tables.html">時系列</a></li>
+                      <li><a href="index.html">時系列</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-users"></i> メンバー管理 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="chartjs.html">一覧</a></li>
-                      <li><a href="chartjs.html">承認</a></li>
-                      <li><a href="chartjs.html">招待</a></li>
+                      <li><a href="index.html">一覧</a></li>
+                      <li><a href="index.html">承認</a></li>
+                      <li><a href="index.html">招待</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -130,7 +130,7 @@
                       </a>
                     </li>
                     <li><a href="javascript:;">Help</a></li>
-                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="index.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
 
@@ -251,62 +251,7 @@
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
                     <div>
-                      <ul class="list-unstyled top_profiles scroll-view" style='height: 270px;'>
-                        <li class="media event">
-                          <a class="pull-left border-aero profile_thumb">
-                            <i class="fa fa-user aero"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-green profile_thumb">
-                            <i class="fa fa-user green"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-blue profile_thumb">
-                            <i class="fa fa-user blue"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-aero profile_thumb">
-                            <i class="fa fa-user aero"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
-                        <li class="media event">
-                          <a class="pull-left border-green profile_thumb">
-                            <i class="fa fa-user green"></i>
-                          </a>
-                          <div class="media-body">
-                            <a class="title" href="#">Ms. Mary Jane</a>
-                            <p><strong>$2300. </strong> Agent Avarage Sales </p>
-                            <p> <small>12 Sales Today</small>
-                            </p>
-                          </div>
-                        </li>
+                      <ul id='timeline' class="list-unstyled top_profiles scroll-view" style='height: 270px; overflow-y: hidden;'>
                       </ul>
                     </div>
                   </div>
@@ -511,18 +456,19 @@
 
     <script>
     var socket = io();
-    var map = new L.Map(d3.select('#map_leaflet').node()).setView([35.678707, 139.739143], 10);
+    var map = new L.Map(d3.select('#map_leaflet').node()).setView([35.678707, 139.739143], 14);
     var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     var svgLayer = d3.select(map.getPanes().overlayPane).append('svg').attr('class', 'leaflet-zoom-hide');
     var plotLayer = svgLayer.append('g');
-    var timelineList = d3.select('#timeline').append('ul')
-      .style('list-item', 'none');
+    var timelineList = d3.select('#timeline');
 
     var timeFormat = d3.time.format('%Y-%m-%d %H:%M:%S');
 
-    var data = [];
+    var __data = [];
+    var initial_money = 12312;
+    var initial_messages = 1234;
 
     var updatePosition = function(d)
     {
@@ -554,17 +500,22 @@
 
     socket.on('send_asset', function(msg) {
       console.log(msg);
-      data.push(msg);
+      msg.amount = Math.ceil(Math.random() * 9900 + 100);
+      __data.push(msg);
       if (msg.location !== void 0) {
-        plotLayer.selectAll('circle').data(data).enter().append('circle')
+        plotLayer.selectAll('circle').data(__data).enter().append('circle')
           .attr('fill', 'steelblue')
           .attr('stroke', '#FFF')
           .attr('stroke-width', 3)
           .attr('r', 10)
           .each(updatePosition);
       }
-      timelineList.selectAll('li').data(data).enter().append('li')
-        .text(function(d) {return timeFormat(new Date(d.timestamp)) + ': ' + d.result.financeTxid;});
+      var item = timelineList.selectAll('li').data(__data).enter().append('li').attr('class', 'media event');
+      var body = item.append('div').attr('class', 'media-body');
+      body.append('a').attr('class', 'title').text(function(d){return timeFormat(new Date(d.timestamp));});
+      body.append('p').text(function(d){return d.amount + ' 円';});
+      body.append('p').append('small').text(function(d){return d.result.metadataSha1;});
+
     });
     reset();
     </script>
