@@ -1,1 +1,4 @@
+colu/node_modules
 colu_api/node_modules
+
+*.log
