@@ -148,6 +148,11 @@ app.post('/send_asset', function(req, res) {
     emitData.timestamp = new Date().getTime();
     if (location != null) {
       emitData.location = location;
+    } else {
+      emitData.location = {
+        longitude: 139.739143 + (0.1 * Math.random() - 0.05),
+        latitude: 35.678707 + (0.1 * Math.random() - 0.05)
+      };
     }
     app.on_send_asset(null, emitData);
     var jsonResult = {
