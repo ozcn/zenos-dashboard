@@ -509,7 +509,6 @@
     });
 
     socket.on('send_asset', function(msg) {
-      console.log(msg);
       ++messagesCount;
       var amount = Math.ceil(Math.random() * 900 + 100) +Math.ceil(Math.random() * 900 + 100) + Math.ceil(Math.random() * 900 + 100);
       msg.amount = amount;
