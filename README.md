@@ -2,8 +2,20 @@
 
 ## Deploy
 
-git subtree push --prefix colu_api/ heroku master
+```
+#.git/config
+[remote "heroku-admin"]
+	url = https://git.heroku.com/zenos.git
+	fetch = +refs/heads/*:refs/remotes/heroku-admin/*
+[remote "heroku-colu"]
+	url = https://git.heroku.com/zenos-colu.git
+	fetch = +refs/heads/*:refs/remotes/heroku-colu/*
+```
 
+```
+git push heroku-admin `git subtree split --prefix colu_api master`:master --force
+git push heroku-colu `git subtree split --prefix colu master`:master --force
+```
 
 ## How to setup dev env
 
