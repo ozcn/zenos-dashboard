@@ -198,30 +198,4 @@ app.get('/test/send_asset', function(req, res) {
   res.json(jsonResult);
 });
 
-/**
- * node $(which colu) で起動中の Colu API へリクエストを送る
- * via: http://documentation.colu.co/
- **/
-function postToApi(apiEndpoint, jsonData, callback) {
-  console.log(apiEndpoint + ': ', JSON.stringify(jsonData));
-  request.post({
-      url: 'https://zenos-colu.herokuapp.com/' + apiEndpoint,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Content-Length': Buffer.byteLength(JSON.stringify(jsonData), 'utf8')
-      },
-      body: JSON.stringify(jsonData)
-    },
-    function(error, response, body) {
-      if (error) {
-        return callback(error);
-      }
-      if (typeof body === 'string') {
-        body = JSON.parse(body);
-      }
-      return callback(null, body);
-    });
-}
-
 module.exports = app;
