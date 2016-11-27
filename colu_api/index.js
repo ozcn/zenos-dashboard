@@ -4,6 +4,12 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var util = require('util');
 var path = require('path');
+var Colu = require('colu');
+
+var coluSettings = {
+  network: 'testnet',
+  privateSeed: ''
+};
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -24,31 +30,25 @@ app.get('/', function(req, res) {
 });
 
 // wallet address を取得する（新規払い出し）
-// http://documentation.colu.co/#GetAddress34
+// http://documentation.colu.co/#GetAddress
 app.post('/get_address', function(req, res) {
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "hdwallet.getAddress", // mandatory
-    id: "1" // mandatory if response is needed
-  };
+  var colu = new Colu({
+    network: coluSettings.network
+  });
 
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 'ng'
-      });
-    }
-
-    console.log(body);
+  colu.on('connect', function () {
+    var address = colu.hdwallet.getAddress();
+    console.log("address: ", address);
 
     var jsonResult = {
       status: 'ok',
-      address: body.result || null,
+      address: address
     };
 
     res.json(jsonResult);
   });
+
+  colu.init();
 });
 
 // 特定の wallet address の情報を取得する
