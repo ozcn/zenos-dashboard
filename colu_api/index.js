@@ -53,7 +53,7 @@ app.post('/get_address', function(req, res) {
 
 // 特定の wallet address の情報を取得する
 // (例) 自分が今いくら assets を持っているか？
-// http://documentation.colu.co/#GetAddressInfo38
+// http://documentation.colu.co/#GetAddressInfo
 app.post('/get_address_info', function(req, res) {
   if (!req.body.address) {
     return res.json({
@@ -61,44 +61,51 @@ app.post('/get_address_info', function(req, res) {
     });
   }
 
-  var params = {
-    address: req.body.address
-  };
+  var colu = new Colu(coluSettings);
+  colu.on('connect', function () {
+    colu.coloredCoins.getAddressInfo(req.body.address, function (err, body) {
+      if (err) {
+        console.error(err);
+        return res.json({
+          status: 'ng'
+        });
+      }
 
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "coloredCoins.getAddressInfo", // mandatory
-    id: "1", // mandatory if response is needed
-    params: params // quary parameters
-  };
+      console.log("getAddressInfo: ", body);
 
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 'ng'
+      var jsonResult = {
+        status: 'ok',
+        address: null,
+        totalAmount: 0
+      };
+
+      if (body.address) {
+        jsonResult.address = body.address;
+      }
+
+      // wallet の総額を算出する
+      var utxos = body.utxos;
+      utxos.forEach(function(utxo){
+        if (!utxo || !utxo.assets) {
+          return;
+        }
+
+        utxo.assets.forEach(function(asset){
+          if (!asset) {
+            return;
+          }
+
+          if (req.body.assetId === asset.assetId) {
+            jsonResult.totalAmount += asset.amount;
+          }
+        });
       });
-    }
 
-    console.log(util.inspect(body, false, null));
-
-    var jsonResult = {
-      status: 'ok',
-      address: null,
-      assets: []
-    };
-
-    if (body.result) {
-      if (body.result.address) {
-        jsonResult.address = body.result.address;
-      }
-      if (body.result.utxos && body.result.utxos[0]) {
-        jsonResult.assets = body.result.utxos[0].assets;
-      }
-    }
-
-    res.json(jsonResult);
+      res.json(jsonResult);
+    });
   });
+
+  colu.init();
 });
 
 // fromAddress から toAddress に asset を送る
