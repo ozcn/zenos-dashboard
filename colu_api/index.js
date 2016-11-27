@@ -4,6 +4,15 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var util = require('util');
 var path = require('path');
+var Colu = require('colu');
+
+require('dotenv').config();
+
+var coluSettings = {
+  network: process.env.COLU_SDK_NETWORK,
+  apiKey: process.env.COLU_SDK_API_KEY,
+  privateSeed: process.env.COLU_SDK_PRIVATE_SEED
+};
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -24,36 +33,30 @@ app.get('/', function(req, res) {
 });
 
 // wallet address を取得する（新規払い出し）
-// http://documentation.colu.co/#GetAddress34
+// http://documentation.colu.co/#GetAddress
 app.post('/get_address', function(req, res) {
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "hdwallet.getAddress", // mandatory
-    id: "1" // mandatory if response is needed
-  };
+  var colu = new Colu({
+    network: coluSettings.network
+  });
 
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 'ng'
-      });
-    }
-
-    console.log(body);
+  colu.on('connect', function () {
+    var address = colu.hdwallet.getAddress();
+    console.log("address: ", address);
 
     var jsonResult = {
       status: 'ok',
-      address: body.result || null,
+      address: address
     };
 
     res.json(jsonResult);
   });
+
+  colu.init();
 });
 
 // 特定の wallet address の情報を取得する
 // (例) 自分が今いくら assets を持っているか？
-// http://documentation.colu.co/#GetAddressInfo38
+// http://documentation.colu.co/#GetAddressInfo
 app.post('/get_address_info', function(req, res) {
   if (!req.body.address) {
     return res.json({
@@ -61,48 +64,55 @@ app.post('/get_address_info', function(req, res) {
     });
   }
 
-  var params = {
-    address: req.body.address
-  };
+  var colu = new Colu(coluSettings);
+  colu.on('connect', function () {
+    colu.coloredCoins.getAddressInfo(req.body.address, function (err, body) {
+      if (err) {
+        console.error(err);
+        return res.json({
+          status: 'ng'
+        });
+      }
 
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "coloredCoins.getAddressInfo", // mandatory
-    id: "1", // mandatory if response is needed
-    params: params // quary parameters
-  };
+      console.log("getAddressInfo: ", body);
 
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 'ng'
+      var jsonResult = {
+        status: 'ok',
+        address: null,
+        totalAmount: 0
+      };
+
+      if (body.address) {
+        jsonResult.address = body.address;
+      }
+
+      // wallet の総額を算出する
+      var utxos = body.utxos;
+      utxos.forEach(function(utxo){
+        if (!utxo || !utxo.assets) {
+          return;
+        }
+
+        utxo.assets.forEach(function(asset){
+          if (!asset) {
+            return;
+          }
+
+          if (req.body.assetId === asset.assetId) {
+            jsonResult.totalAmount += asset.amount;
+          }
+        });
       });
-    }
 
-    console.log(util.inspect(body, false, null));
-
-    var jsonResult = {
-      status: 'ok',
-      address: null,
-      assets: []
-    };
-
-    if (body.result) {
-      if (body.result.address) {
-        jsonResult.address = body.result.address;
-      }
-      if (body.result.utxos && body.result.utxos[0]) {
-        jsonResult.assets = body.result.utxos[0].assets;
-      }
-    }
-
-    res.json(jsonResult);
+      res.json(jsonResult);
+    });
   });
+
+  colu.init();
 });
 
 // fromAddress から toAddress に asset を送る
-// http://documentation.colu.co/#SendAsset36
+// http://documentation.colu.co/#SendAsset
 app.post('/send_asset', function(req, res) {
   if (!req.body.fromAddress || !req.body.toAddress ||
     !req.body.amount || !req.body.assetId) {
@@ -112,14 +122,6 @@ app.post('/send_asset', function(req, res) {
     });
   }
 
-  var sendAsset = {
-    "from": [req.body.fromAddress],
-    "to": [{
-      "address": req.body.toAddress,
-      "amount": req.body.amount,
-      "assetId": req.body.assetId
-    }],
-  };
 
   var location = null;
 
@@ -127,40 +129,50 @@ app.post('/send_asset', function(req, res) {
     location = req.body.fromAddress.location;
   }
 
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "sendAsset", // mandatory
-    id: "1", // mandatory if response is needed
-    params: sendAsset // asset json object
-  };
-
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      app.on_send_asset(err, null);
-      return res.json({
-        status: 'ng'
-      });
-    }
-
-    console.log(util.inspect(body, false, null));
-    var emitData = util.inspect(body, false, null);
-    emitData.timestamp = new Date().getTime();
-    if (location != null) {
-      emitData.location = location;
-    } else {
-      emitData.location = {
-        longitude: 139.739143 + (0.1 * Math.random() - 0.05),
-        latitude: 35.678707 + (0.1 * Math.random() - 0.05)
-      };
-    }
-    app.on_send_asset(null, emitData);
-    var jsonResult = {
-      status: 'ok'
+  var colu = new Colu(coluSettings);
+  colu.on('connect', function () {
+    var args = {
+      "from": [req.body.fromAddress],
+      "to": [{
+        "address": req.body.toAddress,
+        "amount": req.body.amount,
+        "assetId": req.body.assetId
+      }]
     };
 
-    res.json(jsonResult);
+    colu.sendAsset(args, function (err, body) {
+      if (err) {
+        console.error(err);
+        app.on_send_asset(err, null);
+        return res.json({
+          status: 'ng'
+        });
+      }
+
+      console.log("sendAsset: ", body);
+
+      // GEO 情報を付与
+      var emitData = util.inspect(body, false, null);
+      emitData.timestamp = new Date().getTime();
+      if (location) {
+        emitData.location = location;
+      } else {
+        emitData.location = {
+          longitude: 139.739143 + (0.1 * Math.random() - 0.05),
+          latitude: 35.678707 + (0.1 * Math.random() - 0.05)
+        };
+      }
+      app.on_send_asset(null, emitData);
+
+      var jsonResult = {
+        status: 'ok'
+      };
+
+      res.json(jsonResult);
+    });
   });
+
+  colu.init();
 });
 
 app.get('/test/send_asset', function(req, res) {
@@ -188,31 +200,5 @@ app.get('/test/send_asset', function(req, res) {
 
   res.json(jsonResult);
 });
-
-/**
- * node $(which colu) で起動中の Colu API へリクエストを送る
- * via: http://documentation.colu.co/
- **/
-function postToApi(apiEndpoint, jsonData, callback) {
-  console.log(apiEndpoint + ': ', JSON.stringify(jsonData));
-  request.post({
-      url: 'https://zenos-colu.herokuapp.com/' + apiEndpoint,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Content-Length': Buffer.byteLength(JSON.stringify(jsonData), 'utf8')
-      },
-      body: JSON.stringify(jsonData)
-    },
-    function(error, response, body) {
-      if (error) {
-        return callback(error);
-      }
-      if (typeof body === 'string') {
-        body = JSON.parse(body);
-      }
-      return callback(null, body);
-    });
-}
 
 module.exports = app;
