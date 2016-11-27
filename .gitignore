@@ -3,3 +3,6 @@ colu_api/node_modules
 
 *.log
 npm-debug.log
+
+# https://github.com/motdotla/dotenv
+.env
