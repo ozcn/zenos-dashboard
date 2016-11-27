@@ -109,7 +109,7 @@ app.post('/get_address_info', function(req, res) {
 });
 
 // fromAddress から toAddress に asset を送る
-// http://documentation.colu.co/#SendAsset36
+// http://documentation.colu.co/#SendAsset
 app.post('/send_asset', function(req, res) {
   if (!req.body.fromAddress || !req.body.toAddress ||
     !req.body.amount || !req.body.assetId) {
@@ -119,14 +119,6 @@ app.post('/send_asset', function(req, res) {
     });
   }
 
-  var sendAsset = {
-    "from": [req.body.fromAddress],
-    "to": [{
-      "address": req.body.toAddress,
-      "amount": req.body.amount,
-      "assetId": req.body.assetId
-    }],
-  };
 
   var location = null;
 
@@ -134,40 +126,50 @@ app.post('/send_asset', function(req, res) {
     location = req.body.fromAddress.location;
   }
 
-  var jsonData = {
-    jsonrpc: "2.0", // mandatory
-    method: "sendAsset", // mandatory
-    id: "1", // mandatory if response is needed
-    params: sendAsset // asset json object
-  };
-
-  postToApi('', jsonData, function(err, body) {
-    if (err) {
-      console.error(err);
-      app.on_send_asset(err, null);
-      return res.json({
-        status: 'ng'
-      });
-    }
-
-    console.log(util.inspect(body, false, null));
-    var emitData = util.inspect(body, false, null);
-    emitData.timestamp = new Date().getTime();
-    if (location != null) {
-      emitData.location = location;
-    } else {
-      emitData.location = {
-        longitude: 139.739143 + (0.1 * Math.random() - 0.05),
-        latitude: 35.678707 + (0.1 * Math.random() - 0.05)
-      };
-    }
-    app.on_send_asset(null, emitData);
-    var jsonResult = {
-      status: 'ok'
+  var colu = new Colu(coluSettings);
+  colu.on('connect', function () {
+    var args = {
+      "from": [req.body.fromAddress],
+      "to": [{
+        "address": req.body.toAddress,
+        "amount": req.body.amount,
+        "assetId": req.body.assetId
+      }]
     };
 
-    res.json(jsonResult);
+    colu.sendAsset(args, function (err, body) {
+      if (err) {
+        console.error(err);
+        app.on_send_asset(err, null);
+        return res.json({
+          status: 'ng'
+        });
+      }
+
+      console.log("sendAsset: ", body);
+
+      // GEO 情報を付与
+      var emitData = util.inspect(body, false, null);
+      emitData.timestamp = new Date().getTime();
+      if (location) {
+        emitData.location = location;
+      } else {
+        emitData.location = {
+          longitude: 139.739143 + (0.1 * Math.random() - 0.05),
+          latitude: 35.678707 + (0.1 * Math.random() - 0.05)
+        };
+      }
+      app.on_send_asset(null, emitData);
+
+      var jsonResult = {
+        status: 'ok'
+      };
+
+      res.json(jsonResult);
+    });
   });
+
+  colu.init();
 });
 
 app.get('/test/send_asset', function(req, res) {
