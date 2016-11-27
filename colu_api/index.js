@@ -4,15 +4,38 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var util = require('util');
 var path = require('path');
+var router = express.Router();
+var subdomain = require('express-subdomain');
 var Colu = require('colu');
 
 require('dotenv').config();
 
+var community_id = "";
 var coluSettings = {
   network: process.env.COLU_SDK_NETWORK,
   apiKey: process.env.COLU_SDK_API_KEY,
   privateSeed: process.env.COLU_SDK_PRIVATE_SEED
 };
+
+app.use(function(req, res, next) {
+  var domain = req.headers.host,
+    subDomain = domain.split('.');
+
+  if (subDomain[0]) {
+    community_id = subDomain[0];
+
+    coluSettings = {
+      network: process.env[community_id + "_COLU_SDK_NETWORK"],
+      apiKey: process.env[community_id + "_COLU_SDK_API_KEY"],
+      privateSeed: process.env[community_id + "_COLU_SDK_PRIVATE_SEED"],
+    };
+  }
+
+  next();
+});
+
+//the api middleware flow
+app.use(subdomain('*', router));
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -28,13 +51,13 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/', function(req, res) {
+router.get('/', function(req, res) {
   res.send('hello Colu API');
 });
 
 // wallet address を取得する（新規払い出し）
 // http://documentation.colu.co/#GetAddress
-app.post('/get_address', function(req, res) {
+router.post('/get_address', function(req, res) {
   var colu = new Colu({
     network: coluSettings.network
   });
@@ -57,7 +80,7 @@ app.post('/get_address', function(req, res) {
 // 特定の wallet address の情報を取得する
 // (例) 自分が今いくら assets を持っているか？
 // http://documentation.colu.co/#GetAddressInfo
-app.post('/get_address_info', function(req, res) {
+router.post('/get_address_info', function(req, res) {
   if (!req.body.address) {
     return res.json({
       status: 'ng'
@@ -113,7 +136,7 @@ app.post('/get_address_info', function(req, res) {
 
 // fromAddress から toAddress に asset を送る
 // http://documentation.colu.co/#SendAsset
-app.post('/send_asset', function(req, res) {
+router.post('/send_asset', function(req, res) {
   if (!req.body.fromAddress || !req.body.toAddress ||
     !req.body.amount || !req.body.assetId) {
 
@@ -175,7 +198,7 @@ app.post('/send_asset', function(req, res) {
   colu.init();
 });
 
-app.get('/test/send_asset', function(req, res) {
+router.get('/test/send_asset', function(req, res) {
   var example_response = {
     jsonrpc:'2.0',
     id: '1',
