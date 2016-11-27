@@ -6,9 +6,12 @@ var util = require('util');
 var path = require('path');
 var Colu = require('colu');
 
+require('dotenv').config();
+
 var coluSettings = {
-  network: 'testnet',
-  privateSeed: ''
+  network: process.env.COLU_SDK_NETWORK,
+  apiKey: process.env.COLU_SDK_API_KEY,
+  privateSeed: process.env.COLU_SDK_PRIVATE_SEED
 };
 
 app.use(bodyParser.urlencoded({
