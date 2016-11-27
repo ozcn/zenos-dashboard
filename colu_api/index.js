@@ -36,9 +36,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-//the api middleware flow
-app.use(subdomain('*', router));
-
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -52,6 +49,9 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+//the api middleware flow
+app.use(subdomain('*', router));
 
 router.get('/', function(req, res) {
   res.send('hello Colu API');
