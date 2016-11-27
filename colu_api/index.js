@@ -10,7 +10,7 @@ var Colu = require('colu');
 
 require('dotenv').config();
 
-var community_id = "";
+var communityId = "";
 var coluSettings = {
   network: process.env.COLU_SDK_NETWORK,
   apiKey: process.env.COLU_SDK_API_KEY,
@@ -22,12 +22,12 @@ app.use(function(req, res, next) {
     subDomain = domain.split('.');
 
   if (subDomain[0]) {
-    community_id = subDomain[0];
+    communityId = subDomain[0].toUpperCase();
 
     coluSettings = {
-      network: process.env[community_id + "_COLU_SDK_NETWORK"],
-      apiKey: process.env[community_id + "_COLU_SDK_API_KEY"],
-      privateSeed: process.env[community_id + "_COLU_SDK_PRIVATE_SEED"],
+      network: process.env[communityId + "_COLU_SDK_NETWORK"],
+      apiKey: process.env[communityId + "_COLU_SDK_API_KEY"],
+      privateSeed: process.env[communityId + "_COLU_SDK_PRIVATE_SEED"],
     };
   }
 
