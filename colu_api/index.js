@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var util = require('util');
 var path = require('path');
+var _ = require('lodash');
 var router = express.Router();
 var subdomain = require('express-subdomain');
 var Colu = require('colu');
@@ -25,11 +26,11 @@ app.use(function(req, res, next) {
   if (subDomain[0]) {
     communityId = subDomain[0].toUpperCase();
 
-    coluSettings = {
+    coluSettings = _.merge(coluSettings, {
       network: process.env[communityId + "_COLU_SDK_NETWORK"],
       apiKey: process.env[communityId + "_COLU_SDK_API_KEY"],
-      privateSeed: process.env[communityId + "_COLU_SDK_PRIVATE_SEED"],
-    };
+      privateSeed: process.env[communityId + "_COLU_SDK_PRIVATE_SEED"]
+    });
   }
 
   next();
