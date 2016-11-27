@@ -11,7 +11,8 @@ require('dotenv').config();
 var coluSettings = {
   network: process.env.COLU_SDK_NETWORK,
   apiKey: process.env.COLU_SDK_API_KEY,
-  privateSeed: process.env.COLU_SDK_PRIVATE_SEED
+  privateSeed: process.env.COLU_SDK_PRIVATE_SEED,
+  redisUrl: process.env.COLU_SDK_REDIS_URL || process.env.REDIS_URL || ''
 };
 
 app.use(bodyParser.urlencoded({
