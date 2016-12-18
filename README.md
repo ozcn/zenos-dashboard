@@ -15,7 +15,7 @@ git push heroku `git subtree split --prefix colu_api master`:master --force
 
 ## How to setup dev env
 
-Install Node.js v4.6.0
+Install Node.js `.node-version`
 
 ```
 npm install
