@@ -1,6 +1,7 @@
 colu/node_modules
 colu_api/node_modules
 
+!.gitkeep
 *.log
 
 # https://github.com/motdotla/dotenv
