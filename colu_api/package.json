@@ -20,6 +20,7 @@
     "express-subdomain": "1.0.5",
     "lodash": "^4.17.2",
     "request": "^2.75.0",
+    "sequelize": "^3.27.0",
     "socket.io": "^1.5.1"
   }
 }
