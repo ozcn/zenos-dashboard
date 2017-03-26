@@ -19,6 +19,37 @@ var coluSettings = {
   redisUrl: process.env.COLU_SDK_REDIS_URL || process.env.REDIS_URL || ''
 };
 
+console.log(coluSettings);
+
+var Colu = require('colu')
+
+var settings = {
+    network: 'testnet',
+    privateSeed: null
+}
+
+var colu = new Colu(coluSettings)
+colu.on('connect', function () {
+  var privateSeed = colu.hdwallet.getPrivateSeed()
+
+    console.log("privateSeed: ", privateSeed)
+});
+
+var settings = {
+    network: 'mainnet',
+    privateSeed: "6PYNR2hDBF86u3Fwu1n4mWzZQmQTx7wB7bmZiCwvEj4e6Syh4tUzNBx8de"
+}
+colu.init()
+
+var colu = new Colu(coluSettings)
+colu.on('connect', function () {
+  var privateSeed = colu.hdwallet.getPrivateSeed()
+
+    console.log("privateSeed: ", privateSeed)
+});
+
+colu.init()
+
 app.use(function(req, res, next) {
   var domain = req.headers.host,
     subDomain = domain.split('.');
