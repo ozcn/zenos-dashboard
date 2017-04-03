@@ -226,4 +226,17 @@ router.get('/test/send_asset', function(req, res) {
   res.json(jsonResult);
 });
 
+router.get('/privateSeed', function(req, res) {
+  var colu = new Colu(coluSettings)
+  colu.on('connect', function () {
+    var privateSeed = colu.hdwallet.getPrivateSeed()
+
+    console.log("privateSeed: ", privateSeed)
+
+    res.json(privateSeed);
+  });
+
+  colu.init();
+});
+
 module.exports = app;
