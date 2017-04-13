@@ -63,6 +63,8 @@ router.post('/get_address', function(req, res) {
   var colu = new Colu({
     network: coluSettings.network
   });
+  console.log(coluSettings.network);
+  console.log("network");
 
   colu.on('connect', function () {
     var address = colu.hdwallet.getAddress();
@@ -237,6 +239,6 @@ router.get('/privateSeed', function(req, res) {
   });
 
   colu.init();
-});
+})
 
 module.exports = app;
