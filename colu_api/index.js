@@ -92,6 +92,7 @@ router.post('/get_address_info', function(req, res) {
   }
 
   var colu = new Colu(coluSettings);
+  console.log(coluSettings);
   colu.on('connect', function () {
     colu.coloredCoins.getAddressInfo(req.body.address, function (err, body) {
       if (err) {
@@ -157,6 +158,7 @@ router.post('/send_asset', function(req, res) {
   }
 
   var colu = new Colu(coluSettings);
+  console.log(coluSettings);
   colu.on('connect', function () {
     var args = {
       "from": [req.body.fromAddress],
@@ -229,7 +231,9 @@ router.get('/test/send_asset', function(req, res) {
 });
 
 router.get('/privateSeed', function(req, res) {
-  var colu = new Colu(coluSettings)
+  var colu = new Colu(coluSettings);
+  console.log(coluSettings);
+
   colu.on('connect', function () {
     var privateSeed = colu.hdwallet.getPrivateSeed()
 
