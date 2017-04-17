@@ -18,7 +18,6 @@ var coluSettings = {
   privateSeed: process.env.COLU_SDK_PRIVATE_SEED,
   redisUrl: process.env.COLU_SDK_REDIS_URL || process.env.REDIS_URL || '',
   // coloredCoinsHost: "https://zenos-311468746.ap-northeast-1.elb.amazonaws.com",
-  // coluHost: 'https://engine.colu.co'
 };
 
 app.use(function(req, res, next) {
@@ -38,7 +37,7 @@ app.use(function(req, res, next) {
   if (coluSettings['network'] == "mainnet") {
     coluSettings = _.merge(coluSettings, {
       coluHost: 'https://engine.colu.co',
-      coloredCoinsHost: 'https://api.coloredcoins.org/v3',
+      coloredCoinsHost: "https://zenos-311468746.ap-northeast-1.elb.amazonaws.com",
       blockExplorerHost: 'https://explorer.coloredcoins.org'
     });
   }
