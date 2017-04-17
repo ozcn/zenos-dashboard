@@ -37,7 +37,7 @@ app.use(function(req, res, next) {
   if (coluSettings['network'] == "mainnet") {
     coluSettings = _.merge(coluSettings, {
       coluHost: 'https://engine.colu.co',
-      coloredCoinsHost: "https://zenos-311468746.ap-northeast-1.elb.amazonaws.com",
+      coloredCoinsHost: "https://colu.zenos.network",
       blockExplorerHost: 'https://explorer.coloredcoins.org'
     });
   }
