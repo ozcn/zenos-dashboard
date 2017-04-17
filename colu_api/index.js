@@ -35,6 +35,14 @@ app.use(function(req, res, next) {
     });
   }
 
+  if (coluSettings['network'] == "mainnet") {
+    coluSettings = _.merge(coluSettings, {
+      coluHost: 'https://engine.colu.co',
+      coloredCoinsHost: 'https://api.coloredcoins.org/v3',
+      blockExplorerHost: 'https://explorer.coloredcoins.org'
+    });
+  }
+
   next();
 });
 
