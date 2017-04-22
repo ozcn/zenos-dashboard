@@ -160,7 +160,6 @@ router.post('/send_asset', function(req, res) {
     });
   }
 
-
   var location = null;
 
   if (req.body.fromAddress.location !== void 0) {
@@ -238,6 +237,44 @@ router.get('/test/send_asset', function(req, res) {
   };
 
   res.json(jsonResult);
+});
+
+router.post('/issueAsset', function(req, res) {
+  console.log(req.body);
+
+  if (!req.body.divisibility || !req.body.reissueable || !req.body.amount || !req.body.assetName || !req.body.issuer || !req.body.description) {
+    return res.json({
+      status: 'ng'
+    });
+  }
+
+  var colu = new Colu(coluSettings);
+  // console.log(coluSettings);
+  colu.on('connect', function () {
+    var args = {
+        amount: req.body.amount,
+        divisibility: req.body.divisibility,
+        reissueable: req.body.reissueable,
+        transfer: [{
+            amount: 1
+        }],
+        metadata: {
+            'assetName': req.body.assetName,
+            'issuer': req.body.issuer,
+            'description': req.body.description,
+            'urls': [{name:'icon', url: req.body.icon_url || 'https://pbs.twimg.com/profile_images/572390580823412736/uzfQSciL_bigger.png', mimeType: 'image/png', dataHash: ''}],
+        }
+    };
+
+    colu.issueAsset(args, function (err, body) {
+      if (err) return console.error(err);
+      console.log(body);
+
+      res.json(body);
+    })
+  });
+
+  colu.init();
 });
 
 router.get('/privateSeed', function(req, res) {
