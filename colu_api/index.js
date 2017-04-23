@@ -70,11 +70,7 @@ router.get('/', function(req, res) {
 // wallet address を取得する（新規払い出し）
 // http://documentation.colu.co/#GetAddress
 router.post('/get_address', function(req, res) {
-  var colu = new Colu({
-    network: coluSettings.network
-  });
-  console.log(coluSettings.network);
-  console.log("network");
+  var colu = new Colu(coluSettings);
 
   colu.on('connect', function () {
     var address = colu.hdwallet.getAddress();
@@ -102,7 +98,6 @@ router.post('/get_address_info', function(req, res) {
   }
 
   var colu = new Colu(coluSettings);
-  console.log(coluSettings);
   colu.on('connect', function () {
     colu.coloredCoins.getAddressInfo(req.body.address, function (err, body) {
       if (err) {
@@ -167,7 +162,6 @@ router.post('/send_asset', function(req, res) {
   }
 
   var colu = new Colu(coluSettings);
-  console.log(coluSettings);
   colu.on('connect', function () {
     var args = {
       "from": [req.body.fromAddress],
