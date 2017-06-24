@@ -9,7 +9,22 @@
 
     <title>Zen OS Dashboard</title>
 
-    <script src='//d3js.org/d3.v3.min.js'></script>
+    <style>
+
+    .node {
+      font: 10px sans-serif;
+    }
+
+    .link {
+      stroke: steelblue;
+      stroke-opacity: 0.5;
+      fill: none;
+      pointer-events: none;
+    }
+
+    </style>
+
+    <script src='//d3js.org/d3.v4.min.js'></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
@@ -274,8 +289,48 @@
                   <div class="clearfix"></div>
                 </div>
               </div>
-
+              <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                  <!-- <div class="dashboard_network"></div> -->
+                  <div class="clearfix"></div>
+                </div>
+              </div>
             </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Fixed Header Example <small>Users</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <p class="text-muted font-13 m-b-30">
+                      This example shows FixedHeader being styling by the Bootstrap CSS framework.
+                    </p>
+                    <div id="datatable-fixed-header_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                      <div class="row">
+                        <div class="col-sm-6"><div class="dataTables_length" id="datatable-fixed-header_length"><label>Show <select name="datatable-fixed-header_length" aria-controls="datatable-fixed-header" class="form-control input-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div></div><div class="col-sm-6"><div id="datatable-fixed-header_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="datatable-fixed-header"></label></div></div></div>
+                        <div class="row">
+                          <div class="col-sm-12" id="user_datatable"></div>
+                        </div>
+                        <div class="row"><div class="col-sm-5"><div class="dataTables_info" id="datatable-fixed-header_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-7"><div class="dataTables_paginate paging_simple_numbers" id="datatable-fixed-header_paginate"><ul class="pagination"><li class="paginate_button previous disabled" id="datatable-fixed-header_previous"><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="0" tabindex="0">Previous</a></li><li class="paginate_button active"><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="1" tabindex="0">1</a></li><li class="paginate_button "><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="2" tabindex="0">2</a></li><li class="paginate_button "><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="3" tabindex="0">3</a></li><li class="paginate_button "><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="4" tabindex="0">4</a></li><li class="paginate_button "><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="5" tabindex="0">5</a></li><li class="paginate_button "><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="6" tabindex="0">6</a></li><li class="paginate_button next" id="datatable-fixed-header_next"><a href="#" aria-controls="datatable-fixed-header" data-dt-idx="7" tabindex="0">Next</a></li></ul></div></div></div></div>
+                  </div>
+                </div>
+              </div>
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="dashboard_graph">
@@ -345,130 +400,12 @@
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
     <!-- Flot -->
-    <script>
-      $(document).ready(function() {
-        var data1 = [
-          [gd(2012, 1, 1), 17],
-          [gd(2012, 1, 2), 74],
-          [gd(2012, 1, 3), 6],
-          [gd(2012, 1, 4), 39],
-          [gd(2012, 1, 5), 20],
-          [gd(2012, 1, 6), 85],
-          [gd(2012, 1, 7), 7]
-        ];
-
-        var data2 = [
-          [gd(2012, 1, 1), 82],
-          [gd(2012, 1, 2), 23],
-          [gd(2012, 1, 3), 66],
-          [gd(2012, 1, 4), 9],
-          [gd(2012, 1, 5), 119],
-          [gd(2012, 1, 6), 6],
-          [gd(2012, 1, 7), 9]
-        ];
-        $("#canvas_money").length && $.plot($("#canvas_money"), [
-          data1, data2
-        ], {
-          series: {
-            lines: {
-              show: false,
-              fill: true
-            },
-            splines: {
-              show: true,
-              tension: 0.4,
-              lineWidth: 1,
-              fill: 0.4
-            },
-            points: {
-              radius: 0,
-              show: true
-            },
-            shadowSize: 2
-          },
-          grid: {
-            verticalLines: true,
-            hoverable: true,
-            clickable: true,
-            tickColor: "#d5d5d5",
-            borderWidth: 1,
-            color: '#fff'
-          },
-          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
-          xaxis: {
-            tickColor: "rgba(51, 51, 51, 0.06)",
-            mode: "time",
-            tickSize: [1, "day"],
-            //tickLength: 10,
-            axisLabel: "Date",
-            axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 12,
-            axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-          },
-          yaxis: {
-            ticks: 8,
-            tickColor: "rgba(51, 51, 51, 0.06)",
-          },
-          tooltip: false
-        });
-
-        function gd(year, month, day) {
-          return new Date(year, month - 1, day).getTime();
-        }
-        $("#canvas_msg").length && $.plot($("#canvas_msg"), [
-          data1, data2
-        ], {
-          series: {
-            lines: {
-              show: false,
-              fill: true
-            },
-            splines: {
-              show: true,
-              tension: 0.4,
-              lineWidth: 1,
-              fill: 0.4
-            },
-            points: {
-              radius: 0,
-              show: true
-            },
-            shadowSize: 2
-          },
-          grid: {
-            verticalLines: true,
-            hoverable: true,
-            clickable: true,
-            tickColor: "#d5d5d5",
-            borderWidth: 1,
-            color: '#fff'
-          },
-          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
-          xaxis: {
-            tickColor: "rgba(51, 51, 51, 0.06)",
-            mode: "time",
-            tickSize: [1, "day"],
-            //tickLength: 10,
-            axisLabel: "Date",
-            axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 12,
-            axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-          },
-          yaxis: {
-            ticks: 8,
-            tickColor: "rgba(51, 51, 51, 0.06)",
-          },
-          tooltip: false
-        });
-      });
-    </script>
+    <script></script>
     <!-- /Flot -->
 
     <script>
     var socket = io();
-    var map = new L.Map(d3.select('#map_leaflet').node()).setView([35.678707, 139.739143], 13);
+    var map = new L.Map(d3.select('#map_leaflet').node()).setView([36.2596668,136.230923], 13);
     var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
@@ -570,8 +507,302 @@
           d3.select('#money_total').text(moneyCount);
         });
 
+        var startDate = 1476976766526;
+        var endDate = 1476979780671;
+        var day2second = 60 * 60 * 24;
+
+        var data1 = [];
+        var chatsRef = firebase.database().ref("chats");
+
+        for (var day = 0; day < 6; day++) {
+          // startDate += day2second;
+          endDate += day2second;
+
+          console.log(day);
+
+          chatsRef.orderByChild("lastUpdate").startAt(startDate).endAt(endDate)
+            .on("value", function(snapshot){
+              var chats = snapshot.val();
+              var chatsCount = 0;
+              _.forEach(chats, function(value, key) {
+                chatsCount += Object.keys(value).length;
+              });
+              console.log("got the data!", chatsCount);
+
+              data1.push([gd(2016, 1, day), chatsCount]);
+              console.log(data1);
+
+              // var graph = d3.select('#canvas_msg').transition();
+              //
+              // // graph.xScale.domain(d3.extent(dataset, function(d) { return d.date; }));
+              // // graph.yScale.domain(d3.extent(dataset, function(d) { return d.value; }));
+              //
+              // graph.select(".plot")   // 折れ線を
+              //     .duration(750) // 750msで
+              //     .attr("d", line(data1)); // （新しい）datasetに変化させる描画をアニメーション
+              //
+              // graph.select(".x.axis") // x軸を
+              //     .duration(750) // 750msで
+              //     .call(chatsCount); // （domainの変更によって変化した）xAxisに変化させる描画をアニメーション
+              //
+              // graph.select(".y.axis") // y軸を
+              //     .duration(750) // 750msで
+              //     .call(chatsCount); // （domainの変更によって変化した）yAxisに変化させる描画をアニメーション
+
+              console.log(d3.select('#canvas_msg'));
+            });
+        }
+
+        var data2 = [
+          [gd(2012, 1, 1), 8],
+          [gd(2012, 1, 2), 2],
+          [gd(2012, 1, 3), 6],
+          [gd(2012, 1, 4), 9],
+          [gd(2012, 1, 5), 1],
+          [gd(2012, 1, 6), 6],
+          [gd(2012, 1, 7), 9]
+        ];
+
+        $("#canvas_money").length && $.plot($("#canvas_money"), [
+          data1, data2
+        ], {
+          series: {
+            lines: {
+              show: false,
+              fill: true
+            },
+            splines: {
+              show: true,
+              tension: 0.4,
+              lineWidth: 1,
+              fill: 0.4
+            },
+            points: {
+              radius: 0,
+              show: true
+            },
+            shadowSize: 2
+          },
+          grid: {
+            verticalLines: true,
+            hoverable: true,
+            clickable: true,
+            tickColor: "#d5d5d5",
+            borderWidth: 1,
+            color: '#fff'
+          },
+          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
+          xaxis: {
+            tickColor: "rgba(51, 51, 51, 0.06)",
+            mode: "time",
+            tickSize: [1, "day"],
+            //tickLength: 10,
+            axisLabel: "Date",
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 10
+          },
+          yaxis: {
+            ticks: 8,
+            tickColor: "rgba(51, 51, 51, 0.06)",
+          },
+          tooltip: false
+        });
+
+        function gd(year, month, day) {
+          return new Date(year, month - 1, day).getTime();
+        }
+
+        $("#canvas_msg").length && $.plot($("#canvas_msg"), [
+          data1, data2
+        ], {
+          series: {
+            lines: {
+              show: false,
+              fill: true
+            },
+            splines: {
+              show: true,
+              tension: 0.4,
+              lineWidth: 1,
+              fill: 0.4
+            },
+            points: {
+              radius: 0,
+              show: true
+            },
+            shadowSize: 2
+          },
+          grid: {
+            verticalLines: true,
+            hoverable: true,
+            clickable: true,
+            tickColor: "#d5d5d5",
+            borderWidth: 1,
+            color: '#fff'
+          },
+          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
+          xaxis: {
+            tickColor: "rgba(51, 51, 51, 0.06)",
+            mode: "time",
+            tickSize: [1, "day"],
+            //tickLength: 10,
+            axisLabel: "Date",
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial',
+            axisLabelPadding: 10
+          },
+          yaxis: {
+            ticks: 8,
+            tickColor: "rgba(51, 51, 51, 0.06)",
+          },
+          tooltip: false
+        });
       });
     </script>
     <!-- /Firebase -->
+
+    <script>
+    var diameter = 960,
+        radius = diameter / 2,
+        innerRadius = radius - 120;
+
+    var cluster = d3.cluster()
+        .size([360, innerRadius]);
+
+    var line = d3.radialLine()
+        .curve(d3.curveBundle.beta(0.85))
+        .radius(function(d) { return d.y; })
+        .angle(function(d) { return d.x / 180 * Math.PI; });
+
+    var svg = d3.select(".dashboard_network").append("svg")
+        .attr("width", diameter)
+        .attr("height", diameter)
+      .append("g")
+        .attr("transform", "translate(" + radius + "," + radius + ")");
+
+    var link = svg.append("g").selectAll(".link"),
+        node = svg.append("g").selectAll(".node");
+
+    d3.json("flare.json", function(error, classes) {
+      if (error) throw error;
+
+      var root = packageHierarchy(classes)
+          .sum(function(d) { return d.size; });
+
+      cluster(root);
+
+      link = link
+        .data(packageImports(root.leaves()))
+        .enter().append("path")
+          .each(function(d) { d.source = d[0], d.target = d[d.length - 1]; })
+          .attr("class", "link")
+          .attr("d", line);
+
+      node = node
+        .data(root.leaves())
+        .enter().append("text")
+          .attr("class", "node")
+          .attr("dy", "0.31em")
+          .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+          .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+          .text(function(d) { return d.data.key; });
+    });
+
+    // Lazily construct the package hierarchy from class names.
+    function packageHierarchy(classes) {
+      var map = {};
+
+      function find(name, data) {
+        var node = map[name], i;
+        if (!node) {
+          node = map[name] = data || {name: name, children: []};
+          if (name.length) {
+            node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
+            node.parent.children.push(node);
+            node.key = name.substring(i + 1);
+          }
+        }
+        return node;
+      }
+
+      classes.forEach(function(d) {
+        find(d.name, d);
+      });
+
+      return d3.hierarchy(map[""]);
+    }
+
+    // Return a list of imports for the given array of nodes.
+    function packageImports(nodes) {
+      var map = {},
+          imports = [];
+
+      // Compute a map from name to node.
+      nodes.forEach(function(d) {
+        map[d.data.name] = d;
+      });
+
+      // For each import, construct a link from the source to target node.
+      nodes.forEach(function(d) {
+        if (d.data.imports) d.data.imports.forEach(function(i) {
+          imports.push(map[d.data.name].path(map[i]));
+        });
+      });
+
+      return imports;
+    }
+
+    </script>
+
+    <script type="text/javascript">
+      d3.json('users.json', function (error,data) {
+
+        function tabulate(data, columns) {
+
+          data = data.slice(0, 10);
+
+
+      		var table = d3.select('#user_datatable').append('table').attr('class', 'table table-striped table-bordered dataTable no-');
+          //  {id: "datatable-fixed-header", class: "footer"}
+      		var thead = table.append('thead')
+      		var	tbody = table.append('tbody');
+
+      		// append the header row
+      		thead.append('tr')
+      		  .selectAll('th')
+      		  .data(columns).enter()
+      		  .append('th')
+              .attr('class', 'sorting_asc')
+              .attr('aria-sort', 'ascending')
+      		    .text(function (column) { return column; });
+
+      		// create a row for each object in the data
+      		var rows = tbody.selectAll('tr')
+      		  .data(data)
+      		  .enter()
+      		  .append('tr');
+
+      		// create a cell in each row for each column
+      		var cells = rows.selectAll('td')
+      		  .data(function (row) {
+      		    return columns.map(function (column) {
+      		      return {column: column, value: row[column]};
+      		    });
+      		  })
+      		  .enter()
+      		  .append('td')
+      		    .text(function (d) { return d.value; });
+
+      	  return table;
+      	}
+
+      	// render the table(s)
+      	tabulate(data, ['氏名', 'カタカナ', "性別", "電話番号", "メールアドレス", "郵便番号", "住所", "", "生年月日", "年齢", "出身地", "血液型",'年収']);
+      });
+
+    </script>
   </body>
 </html>
