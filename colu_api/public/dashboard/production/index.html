@@ -28,6 +28,7 @@
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+    <script src='../../js/fdg.js'></script>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -232,7 +233,8 @@
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="placeholder33" style="height: 260px; display: none" class="demo-placeholder"></div>
                     <div style="width: 100%;">
-                      <div id="canvas_msg" class="demo-placeholder" style="width: 100%; height:270px;"></div>
+                      <div id="canvas_msg" class="demo-placeholder" style="width: 100%; height:270px;">
+                      </div>
                     </div>
                   </div>
 
@@ -291,7 +293,16 @@
               </div>
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                  <!-- <div class="dashboard_network"></div> -->
+                  <div class="dashboard_network">
+                    <svg id='dashboard_network-svg' width='100%' height='500px'></svg>
+                    <script>
+                      d3.json('miserables.json', function(err, data) {
+                        if (err !== null) throw err;
+                        var fdg = d3.fdg();
+                        d3.select('svg#dashboard_network-svg').datum(data).call(fdg);
+                      });
+                    </script>
+                  </div>
                   <div class="clearfix"></div>
                 </div>
               </div>
@@ -665,6 +676,7 @@
     <!-- /Firebase -->
 
     <script>
+    /*
     var diameter = 960,
         radius = diameter / 2,
         innerRadius = radius - 120;
@@ -754,7 +766,7 @@
 
       return imports;
     }
-
+    */
     </script>
 
     <script type="text/javascript">
