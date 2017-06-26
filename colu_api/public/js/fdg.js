@@ -86,6 +86,12 @@
           .links(graph.links);
 
     };
+    _fdg.width = function(_) {
+      return arguments.length ? (_width = typeof _ === 'function' ? _ : constant(+_), _fdg) : _width;
+    };
+    _fdg.height = function(_) {
+      return arguments.length ? (_height = typeof _ === 'function' ? _ : constant(+_), _fdg) : _height;
+    };
     return _fdg;
   };
 
