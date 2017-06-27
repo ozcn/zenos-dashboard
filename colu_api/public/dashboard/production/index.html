@@ -24,12 +24,55 @@
 
     </style>
 
-    <script src='//d3js.org/d3.v4.min.js'></script>
+    <script src='//d3js.org/d3.v3.min.js'></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
-    <script src='../../js/fdg.js'></script>
-    <script src='../../js/cd.js'></script>
+
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="../vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="../vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="../vendors/Flot/jquery.flot.js"></script>
+    <script src="../vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="../vendors/Flot/jquery.flot.time.js"></script>
+    <script src="../vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="../vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="../vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="../vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="../vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="../vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="../vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="../vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="../vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="../vendors/moment/min/moment.min.js"></script>
+    <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+    <!-- Flot -->
+    <script></script>
+    <!-- /Flot -->
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -48,6 +91,32 @@
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
+
+    <style>
+      .graph .axis {
+          stroke-width: 1;
+      }
+
+      .graph .axis .tick line {
+          stroke: black;
+      }
+
+      .graph .axis .tick text {
+          fill: black;
+          font-size: 0.7em;
+      }
+
+      .graph .axis .domain {
+          fill: none;
+          stroke: black;
+      }
+
+      .graph .group {
+          fill: none;
+          stroke: black;
+          stroke-width: 1.5;
+      }
+    </style>
   </head>
 
   <body class="nav-md">
@@ -254,7 +323,8 @@
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="placeholder33" style="height: 260px; display: none" class="demo-placeholder"></div>
                     <div style="width: 100%;">
-                      <div id="canvas_msg" class="demo-placeholder" style="width: 100%; height:270px;">
+                      <div id="message_transaction" class="graph"></div>
+                      <!-- <div id="canvas_msg" class="demo-placeholder" style="width: 100%; height:270px;"> -->
                       </div>
                     </div>
                   </div>
@@ -284,7 +354,9 @@
                   <div class="col-md-9 col-sm-9 col-xs-9">
                     <div id="placeholder33" style="height: 260px; display: none" class="demo-placeholder"></div>
                     <div style="width: 100%;">
-                      <div id="canvas_money" class="demo-placeholder" style="width: 100%; height:270px;"></div>
+
+                      <div id="money_transaction" class="graph"></div>
+                      <!-- <div id="canvas_money" class="demo-placeholder" style="width: 100%; height:270px;"></div> -->
                     </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
@@ -314,31 +386,7 @@
               </div>
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                  <div id="dashboard_network" style='width: 100%; height: 500px;' class="" role="tabpanel" data-example-id="togglable-tabs">
-                    <ul id="dashboard_networkTab" class="nav nav-tabs bar_tabs" role="tablist">
-                      <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">chord diagram</a>
-                      </li>
-                      <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">force directed graph</a>
-                      </li>
-                    </ul>
-                    <div id="dashboard_networkTabContent" class="tab-content">
-                      <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
-                        <svg id='dashboard_network-cd' width='100%' height='500px'></svg>
-                      </div>
-                      <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-                        <svg id='dashboard_network-fdg' width='100%' height='500px'></svg>
-                      </div>
-                    </div>
-                  </div>
-                  <script>
-                    d3.json('miserables.json', function(err, data) {
-                      if (err !== null) throw err;
-                      var width = d3.select('#dashboard_network').node().clientWidth;
-                      d3.select('svg#dashboard_network-cd').datum(data).call(d3.cd().width(width).height(500));
-                      d3.select('svg#dashboard_network-fdg').datum(data).call(d3.fdg().width(width).height(500));
-                    });
-                  </script>
-                  <div class="clearfix"></div>
+                  <iframe src="./graph.html" width="100%" height="600px" frameBorder="0"></iframe>
                 </div>
               </div>
             </div>
@@ -405,116 +453,316 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="../vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
-    <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
-    <!-- Chart.js -->
-    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
-    <!-- gauge.js -->
-    <script src="../vendors/gauge.js/dist/gauge.min.js"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-    <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
-    <!-- Skycons -->
-    <script src="../vendors/skycons/skycons.js"></script>
-    <!-- Flot -->
-    <script src="../vendors/Flot/jquery.flot.js"></script>
-    <script src="../vendors/Flot/jquery.flot.pie.js"></script>
-    <script src="../vendors/Flot/jquery.flot.time.js"></script>
-    <script src="../vendors/Flot/jquery.flot.stack.js"></script>
-    <script src="../vendors/Flot/jquery.flot.resize.js"></script>
-    <!-- Flot plugins -->
-    <script src="../vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-    <script src="../vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
-    <script src="../vendors/flot.curvedlines/curvedLines.js"></script>
-    <!-- DateJS -->
-    <script src="../vendors/DateJS/build/date.js"></script>
-    <!-- JQVMap -->
-    <script src="../vendors/jqvmap/dist/jquery.vmap.js"></script>
-    <script src="../vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-    <script src="../vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="../vendors/moment/min/moment.min.js"></script>
-    <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-
-    <!-- Custom Theme Scripts -->
-    <script src="../build/js/custom.min.js"></script>
-    <!-- Flot -->
-    <script></script>
-    <!-- /Flot -->
-
     <script>
-    var socket = io();
-    var map = new L.Map(d3.select('#map_leaflet').node()).setView([36.2596668,136.230923], 13);
-    var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    var svgLayer = d3.select(map.getPanes().overlayPane).append('svg').attr('class', 'leaflet-zoom-hide');
-    var plotLayer = svgLayer.append('g');
-    var timelineList = d3.select('#timeline');
+      var socket = io();
+      var map = new L.Map(d3.select('#map_leaflet').node()).setView([36.291488,136.363662], 13);
 
-    var timeFormat = d3.time.format('%Y-%m-%d %H:%M:%S');
-    var messagesCount = 0;
-    var moneyCount = 123120;
-    var __data = [];
+      var tile = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-    var updatePosition = function(d)
-    {
-      if (d.location !== void 0) {
-        d.pos = map.latLngToLayerPoint(new L.LatLng(d.location.latitude, d.location.longitude));
-        d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
+      var svgLayer = d3.select(map.getPanes().overlayPane).append('svg').attr('class', 'leaflet-zoom-hide');
+      var plotLayer = svgLayer.append('g');
+      var timelineList = d3.select('#timeline');
+
+      // var timeFormat = d3.format('%Y-%m-%d %H:%M:%S');
+      var messagesCount = 0;
+      var currentMessagesCount = 0;
+      var moneyCount = 123120;
+      var currentMoneyCount = 0;
+      var __data = [];
+
+      var updatePosition = function(d)
+      {
+        if (d.location !== void 0) {
+          d.pos = map.latLngToLayerPoint(new L.LatLng(d.location.latitude, d.location.longitude));
+          d3.select(this).attr( {cx: d.pos.x, cy: d.pos.y } );
+        }
       }
-    }
-    var reset = function()
-    {
-      var bounds = map.getBounds();
-      var topLeft = map.latLngToLayerPoint(bounds.getNorthWest());
-      var bottomRight = map.latLngToLayerPoint(bounds.getSouthEast());
 
-      svgLayer.attr("width", bottomRight.x - topLeft.x)
-        .attr("height", bottomRight.y - topLeft.y)
-        .style("left", topLeft.x + "px")
-        .style("top", topLeft.y + "px");
+      var reset = function() {
+        var bounds = map.getBounds();
+        var topLeft = map.latLngToLayerPoint(bounds.getNorthWest());
+        var bottomRight = map.latLngToLayerPoint(bounds.getSouthEast());
 
-      plotLayer.attr('transform', 'translate('+ -topLeft.x + ',' + -topLeft.y + ')');
-    }
+        svgLayer.attr("width", bottomRight.x - topLeft.x)
+          .attr("height", bottomRight.y - topLeft.y)
+          .style("left", topLeft.x + "px")
+          .style("top", topLeft.y + "px");
 
-    map.on('move', function()
-    {
+        plotLayer.attr('transform', 'translate('+ -topLeft.x + ',' + -topLeft.y + ')');
+      }
+
+      map.on('move', function(){
+        reset();
+
+        plotLayer.selectAll('circle').each(updatePosition);
+      });
+
+      socket.on('send_asset', function(msg) {
+        ++currentMessagesCount;
+        ++messagesCount;
+        var amount = Math.ceil(Math.random() * 900 + 100) +Math.ceil(Math.random() * 900 + 100) + Math.ceil(Math.random() * 900 + 100);
+        msg.amount = amount;
+        currentMoneyCount += amount;
+        moneyCount += amount;
+
+        __data.push(msg);
+
+        if (msg.location !== void 0) {
+          plotLayer.selectAll('circle').data(__data).enter().append('circle')
+            .attr('fill', 'steelblue')
+            .attr('stroke', '#FFF')
+            .attr('stroke-width', 3)
+            .attr('r', 10)
+            .each(updatePosition);
+        }
+
+        var item = timelineList.selectAll('li').data(__data).enter().append('li').attr('class', 'media event');
+        var body = item.append('div').attr('class', 'media-body');
+
+        body.append('a').attr('class', 'title').text(function(d){
+          return new Date(d.timestamp);
+        });
+
+        body.append('p').text(function(d){
+          return d.amount + ' 円';
+        });
+
+        body.append('p').append('small').text(function(d){
+          return d.result.metadataSha1;
+        });
+
+        $("#messagesCount").text(messagesCount);
+        d3.select('#money_total').text(moneyCount);
+      });
+
       reset();
-      plotLayer.selectAll('circle').each(updatePosition);
-    });
 
-    socket.on('send_asset', function(msg) {
-      ++messagesCount;
-      var amount = Math.ceil(Math.random() * 900 + 100) +Math.ceil(Math.random() * 900 + 100) + Math.ceil(Math.random() * 900 + 100);
-      msg.amount = amount;
-      moneyCount += amount;
+      // hogehoge
 
-      __data.push(msg);
-      if (msg.location !== void 0) {
-        plotLayer.selectAll('circle').data(__data).enter().append('circle')
-          .attr('fill', 'steelblue')
-          .attr('stroke', '#FFF')
-          .attr('stroke-width', 3)
-          .attr('r', 10)
-          .each(updatePosition);
+      var limit = 60 * 1,
+          duration = 750,
+          now = new Date(Date.now() - duration)
+
+      var width = 800;
+      var height = 250;
+
+      // hoge1
+
+      var groups1 = {
+          current: {
+              value: 0,
+              color: 'orange',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          },
+          target: {
+              value: 0,
+              color: 'green',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          },
+          output: {
+              value: 0,
+              color: 'grey',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          }
+      };
+
+      var x1 = d3.time.scale()
+          .domain([now - (limit - 2), now - duration])
+          .range([0, width])
+
+      var y1 = d3.scale.linear()
+          .domain([0, 100])
+          .range([height, 0])
+
+      var line1 = d3.svg.line()
+          .interpolate('basis')
+          .x(function(d, i) {
+              return x1(now - (limit - 1 - i) * duration)
+          })
+          .y(function(d) {
+              return y1(d)
+          })
+
+      var svg1 = d3.select('#message_transaction').append('svg')
+          .attr('class', 'charts')
+          .attr('width', width)
+          .attr('height', height + 50)
+
+      var axis1 = svg1.append('g')
+          .attr('class', 'x axis')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(x1.axis = d3.svg.axis().scale(x1).orient('bottom'))
+
+      var paths1 = svg1.append('g')
+
+      for (var name in groups1) {
+          var group = groups1[name]
+          group.path = paths1.append('path')
+              .data([group.data])
+              .attr('class', name + ' group')
+              .style('stroke', group.color)
       }
-      var item = timelineList.selectAll('li').data(__data).enter().append('li').attr('class', 'media event');
-      var body = item.append('div').attr('class', 'media-body');
-      body.append('a').attr('class', 'title').text(function(d){return timeFormat(new Date(d.timestamp));});
-      body.append('p').text(function(d){return d.amount + ' 円';});
-      body.append('p').append('small').text(function(d){return d.result.metadataSha1;});
-      $("#messagesCount").text(messagesCount);
-      d3.select('#money_total').text(moneyCount);
-    });
-    reset();
+
+      function tick1() {
+        now = new Date()
+
+        // Add new values
+        for (var name in groups1) {
+            var group = groups1[name]
+
+            if (name = "current") {
+              console.log(currentMessagesCount)
+              group.data.push(currentMessagesCount) // Real values arrive at irregular intervals
+              currentMessagesCount = 0
+            } else {
+              group.data.push(messagesCount) // Real values arrive at irregular intervals
+            }
+
+            // group.data.push(20 + Math.random() * 100)
+            group.path.attr('d', line1)
+        }
+
+        // Shift domain
+        x1.domain([now - (limit - 2) * duration, now - duration])
+
+        // Slide x-axis left
+        axis1.transition()
+            .duration(duration)
+            .ease('linear')
+            .call(x1.axis)
+
+        // Slide paths left
+        paths1.attr('transform', null)
+            .transition()
+            .duration(duration)
+            .ease('linear')
+            .attr('transform', 'translate(' + x1(now - (limit - 1) * duration) + ')')
+            .each('end', tick1)
+
+        // Remove oldest data point from each group
+        for (var name in groups1) {
+            var group = groups1[name]
+            group.data.shift()
+        }
+      }
+
+      // hogehoge
+
+      var groups2 = {
+          current: {
+              value: 0,
+              color: 'orange',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          },
+          target: {
+              value: 0,
+              color: 'green',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          },
+          output: {
+              value: 0,
+              color: 'grey',
+              data: d3.range(limit).map(function() {
+                  return 0
+              })
+          }
+      };
+
+      var x2 = d3.time.scale()
+          .domain([now - (limit - 2), now - duration])
+          .range([0, width])
+
+      var y2 = d3.scale.linear()
+          .domain([0, 100])
+          .range([height, 0])
+
+      var line2 = d3.svg.line()
+          .interpolate('basis')
+          .x(function(d, i) {
+              return x2(now - (limit - 1 - i) * duration)
+          })
+          .y(function(d) {
+              return y2(d)
+          })
+
+      var svg2 = d3.select('#money_transaction').append('svg')
+          .attr('class', 'charts')
+          .attr('width', width)
+          .attr('height', height + 50)
+
+      var axis2 = svg2.append('g')
+          .attr('class', 'x axis')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(x2.axis = d3.svg.axis().scale(x2).orient('bottom'))
+
+      var paths2 = svg2.append('g')
+
+      for (var name in groups2) {
+          var group = groups2[name]
+          group.path = paths2.append('path')
+              .data([group.data])
+              .attr('class', name + ' group')
+              .style('stroke', group.color)
+      }
+
+      function tick2() {
+        now = new Date()
+
+        // Add new values
+        for (var name in groups2) {
+            var group = groups2[name]
+
+            if (name = "current") {
+              console.log(currentMoneyCount / 1000)
+              group.data.push(currentMoneyCount / 1000) // Real values arrive at irregular intervals
+              currentMoneyCount = 0
+            } else {
+              group.data.push(moneyCount) // Real values arrive at irregular intervals
+            }
+
+            // group.data.push(20 + Math.random() * 100)
+            group.path.attr('d', line2)
+        }
+
+        // Shift domain
+        x2.domain([now - (limit - 2) * duration, now - duration])
+
+        // Slide x-axis left
+        axis2.transition()
+            .duration(duration)
+            .ease('linear')
+            .call(x2.axis)
+
+        // Slide paths left
+        paths2.attr('transform', null)
+            .transition()
+            .duration(duration)
+            .ease('linear')
+            .attr('transform', 'translate(' + x2(now - (limit - 1) * duration) + ')')
+            .each('end', tick2)
+
+        // Remove oldest data point from each group
+        for (var name in groups2) {
+            var group = groups2[name]
+            group.data.shift()
+        }
+      }
+
+      tick1();
+      tick2();
+
     </script>
 
     <!-- Firebase -->
@@ -552,257 +800,9 @@
           $("#messagesCount").text(messagesCount);
           d3.select('#money_total').text(moneyCount);
         });
-
-        var startDate = 1476976766526;
-        var endDate = 1476979780671;
-        var day2second = 60 * 60 * 24;
-
-        var data1 = [];
-        var chatsRef = firebase.database().ref("chats");
-
-        for (var day = 0; day < 6; day++) {
-          // startDate += day2second;
-          endDate += day2second;
-
-          console.log(day);
-
-          chatsRef.orderByChild("lastUpdate").startAt(startDate).endAt(endDate)
-            .on("value", function(snapshot){
-              var chats = snapshot.val();
-              var chatsCount = 0;
-              _.forEach(chats, function(value, key) {
-                chatsCount += Object.keys(value).length;
-              });
-              console.log("got the data!", chatsCount);
-
-              data1.push([gd(2016, 1, day), chatsCount]);
-              console.log(data1);
-
-              // var graph = d3.select('#canvas_msg').transition();
-              //
-              // // graph.xScale.domain(d3.extent(dataset, function(d) { return d.date; }));
-              // // graph.yScale.domain(d3.extent(dataset, function(d) { return d.value; }));
-              //
-              // graph.select(".plot")   // 折れ線を
-              //     .duration(750) // 750msで
-              //     .attr("d", line(data1)); // （新しい）datasetに変化させる描画をアニメーション
-              //
-              // graph.select(".x.axis") // x軸を
-              //     .duration(750) // 750msで
-              //     .call(chatsCount); // （domainの変更によって変化した）xAxisに変化させる描画をアニメーション
-              //
-              // graph.select(".y.axis") // y軸を
-              //     .duration(750) // 750msで
-              //     .call(chatsCount); // （domainの変更によって変化した）yAxisに変化させる描画をアニメーション
-
-              console.log(d3.select('#canvas_msg'));
-            });
-        }
-
-        var data2 = [
-          [gd(2012, 1, 1), 8],
-          [gd(2012, 1, 2), 2],
-          [gd(2012, 1, 3), 6],
-          [gd(2012, 1, 4), 9],
-          [gd(2012, 1, 5), 1],
-          [gd(2012, 1, 6), 6],
-          [gd(2012, 1, 7), 9]
-        ];
-
-        $("#canvas_money").length && $.plot($("#canvas_money"), [
-          data1, data2
-        ], {
-          series: {
-            lines: {
-              show: false,
-              fill: true
-            },
-            splines: {
-              show: true,
-              tension: 0.4,
-              lineWidth: 1,
-              fill: 0.4
-            },
-            points: {
-              radius: 0,
-              show: true
-            },
-            shadowSize: 2
-          },
-          grid: {
-            verticalLines: true,
-            hoverable: true,
-            clickable: true,
-            tickColor: "#d5d5d5",
-            borderWidth: 1,
-            color: '#fff'
-          },
-          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
-          xaxis: {
-            tickColor: "rgba(51, 51, 51, 0.06)",
-            mode: "time",
-            tickSize: [1, "day"],
-            //tickLength: 10,
-            axisLabel: "Date",
-            axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 12,
-            axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-          },
-          yaxis: {
-            ticks: 8,
-            tickColor: "rgba(51, 51, 51, 0.06)",
-          },
-          tooltip: false
-        });
-
-        function gd(year, month, day) {
-          return new Date(year, month - 1, day).getTime();
-        }
-
-        $("#canvas_msg").length && $.plot($("#canvas_msg"), [
-          data1, data2
-        ], {
-          series: {
-            lines: {
-              show: false,
-              fill: true
-            },
-            splines: {
-              show: true,
-              tension: 0.4,
-              lineWidth: 1,
-              fill: 0.4
-            },
-            points: {
-              radius: 0,
-              show: true
-            },
-            shadowSize: 2
-          },
-          grid: {
-            verticalLines: true,
-            hoverable: true,
-            clickable: true,
-            tickColor: "#d5d5d5",
-            borderWidth: 1,
-            color: '#fff'
-          },
-          colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
-          xaxis: {
-            tickColor: "rgba(51, 51, 51, 0.06)",
-            mode: "time",
-            tickSize: [1, "day"],
-            //tickLength: 10,
-            axisLabel: "Date",
-            axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 12,
-            axisLabelFontFamily: 'Verdana, Arial',
-            axisLabelPadding: 10
-          },
-          yaxis: {
-            ticks: 8,
-            tickColor: "rgba(51, 51, 51, 0.06)",
-          },
-          tooltip: false
-        });
       });
     </script>
     <!-- /Firebase -->
-
-    <script>
-    /*
-    var diameter = 960,
-        radius = diameter / 2,
-        innerRadius = radius - 120;
-
-    var cluster = d3.cluster()
-        .size([360, innerRadius]);
-
-    var line = d3.radialLine()
-        .curve(d3.curveBundle.beta(0.85))
-        .radius(function(d) { return d.y; })
-        .angle(function(d) { return d.x / 180 * Math.PI; });
-
-    var svg = d3.select(".dashboard_network").append("svg")
-        .attr("width", diameter)
-        .attr("height", diameter)
-      .append("g")
-        .attr("transform", "translate(" + radius + "," + radius + ")");
-
-    var link = svg.append("g").selectAll(".link"),
-        node = svg.append("g").selectAll(".node");
-
-    d3.json("flare.json", function(error, classes) {
-      if (error) throw error;
-
-      var root = packageHierarchy(classes)
-          .sum(function(d) { return d.size; });
-
-      cluster(root);
-
-      link = link
-        .data(packageImports(root.leaves()))
-        .enter().append("path")
-          .each(function(d) { d.source = d[0], d.target = d[d.length - 1]; })
-          .attr("class", "link")
-          .attr("d", line);
-
-      node = node
-        .data(root.leaves())
-        .enter().append("text")
-          .attr("class", "node")
-          .attr("dy", "0.31em")
-          .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
-          .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-          .text(function(d) { return d.data.key; });
-    });
-
-    // Lazily construct the package hierarchy from class names.
-    function packageHierarchy(classes) {
-      var map = {};
-
-      function find(name, data) {
-        var node = map[name], i;
-        if (!node) {
-          node = map[name] = data || {name: name, children: []};
-          if (name.length) {
-            node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
-            node.parent.children.push(node);
-            node.key = name.substring(i + 1);
-          }
-        }
-        return node;
-      }
-
-      classes.forEach(function(d) {
-        find(d.name, d);
-      });
-
-      return d3.hierarchy(map[""]);
-    }
-
-    // Return a list of imports for the given array of nodes.
-    function packageImports(nodes) {
-      var map = {},
-          imports = [];
-
-      // Compute a map from name to node.
-      nodes.forEach(function(d) {
-        map[d.data.name] = d;
-      });
-
-      // For each import, construct a link from the source to target node.
-      nodes.forEach(function(d) {
-        if (d.data.imports) d.data.imports.forEach(function(i) {
-          imports.push(map[d.data.name].path(map[i]));
-        });
-      });
-
-      return imports;
-    }
-    */
-    </script>
 
     <script type="text/javascript">
       d3.json('users.json', function (error,data) {

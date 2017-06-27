@@ -190,8 +190,8 @@ router.post('/send_asset', function(req, res) {
         emitData.location = location;
       } else {
         emitData.location = {
-          longitude: 139.739143 + (0.1 * Math.random() - 0.05),
-          latitude: 35.678707 + (0.1 * Math.random() - 0.05)
+          longitude: 136.363662 + (0.1 * Math.random() - 0.05),
+          latitude: 36.291488 + (0.1 * Math.random() - 0.05)
         };
       }
       app.on_send_asset(null, emitData);
@@ -222,8 +222,8 @@ router.get('/test/send_asset', function(req, res) {
   };
   example_response.timestamp = new Date().getTime();
   example_response.location = {
-    longitude: 139.739143 + (0.1 * Math.random() - 0.05),
-    latitude: 35.678707 + (0.1 * Math.random() - 0.05)
+    longitude: 136.363662 + (0.1 * Math.random() - 0.05),
+    latitude: 36.291488 + (0.1 * Math.random() - 0.05)
   };
   app.on_send_asset(null, example_response);
   var jsonResult = {
